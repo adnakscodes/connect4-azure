@@ -30,18 +30,18 @@ app.http("getGame", {
                 };
             }
 
-            const { id, gameId: gid, board, players } = game;
-
             return {
                 status: 200,
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    id,
-                    gameId: gid,
-                    board,
-                    players
+                    id: game.id,
+                    gameId: game.gameId,
+                    board: game.board,
+                    players: game.players,
+                    currentTurn: game.currentTurn,   // ✅ ADD THIS
+                    winner: game.winner || null      // ✅ ADD THIS
                 })
             };
 
