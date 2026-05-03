@@ -17,7 +17,8 @@ app.http("createGame", {
                 gameId: gameId,
                 board: Array(6).fill(null).map(() => Array(7).fill(0)),
                 players: ["P1"],
-                currentTurn: "P1"
+                currentTurn: "P1",
+                winner: null
             };
 
             await createGame(game);
