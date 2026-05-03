@@ -1,55 +1,54 @@
 const { app } = require("@azure/functions");
 const { getGame, updateGame } = require("./store");
 
-// Check win function
-function checkWin(board, playerValue) {
+function checkWin(board, player) {
     const rows = 6;
     const cols = 7;
 
     // Horizontal
     for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols - 3; c++) {
+        for (let c = 0; c <= cols - 4; c++) {
             if (
-                board[r][c] === playerValue &&
-                board[r][c + 1] === playerValue &&
-                board[r][c + 2] === playerValue &&
-                board[r][c + 3] === playerValue
+                board[r][c] === player &&
+                board[r][c + 1] === player &&
+                board[r][c + 2] === player &&
+                board[r][c + 3] === player
             ) return true;
         }
     }
 
     // Vertical
     for (let c = 0; c < cols; c++) {
-        for (let r = 0; r < rows - 3; r++) {
+        for (let r = 0; r <= rows - 4; r++) {
             if (
-                board[r][c] === playerValue &&
-                board[r + 1][c] === playerValue &&
-                board[r + 2][c] === playerValue &&
-                board[r + 3][c] === playerValue
+                board[r][c] === player &&
+                board[r + 1][c] === player &&
+                board[r + 2][c] === player &&
+                board[r + 3][c] === player
             ) return true;
         }
     }
 
     // Diagonal \
-    for (let r = 0; r < rows - 3; r++) {
-        for (let c = 0; c < cols - 3; c++) {
+    for (let r = 0; r <= rows - 4; r++) {
+        for (let c = 0; c <= cols - 4; c++) {
             if (
-                board[r][c] === playerValue &&
-                board[r + 1][c + 1] === playerValue &&
-                board[r + 2][c + 2] === playerValue &&
-                board[r + 3][c + 3] === playerValue
+                board[r][c] === player &&
+                board[r + 1][c + 1] === player &&
+                board[r + 2][c + 2] === player &&
+                board[r + 3][c + 3] === player
             ) return true;
         }
     }
 
     // Diagonal /
     for (let r = 3; r < rows; r++) {
-        for (let c = 0; c < cols - 3; c++) {
+        for (let c = 0; c <= cols - 4; c++) {
             if (
-                board[r][c] === playerValue &&
-                board[r - 1][c + 1] === playerValue &&
-                board[r - 2][c + 2] === playerValue &&
-                board[r - 3][c + 3] === playerValue
+                board[r][c] === player &&
+                board[r - 1][c + 1] === player &&
+                board[r - 2][c + 2] === player &&
+                board[r - 3][c + 3] === player
             ) return true;
         }
     }
@@ -74,7 +73,6 @@ app.http("makeMove", {
                 };
             }
 
-            // Prevent moves after win
             if (game.winner) {
                 return {
                     status: 400,
@@ -82,7 +80,6 @@ app.http("makeMove", {
                 };
             }
 
-            // Check turn
             if (game.currentTurn !== playerId) {
                 return {
                     status: 400,
@@ -92,28 +89,28 @@ app.http("makeMove", {
 
             const playerValue = playerId === "P1" ? 1 : 2;
 
+            let placedRow = -1;
+
             // Drop piece
-            let placed = false;
-            for (let row = 5; row >= 0; row--) {
-                if (game.board[row][column] === 0) {
-                    game.board[row][column] = playerValue;
-                    placed = true;
+            for (let r = 5; r >= 0; r--) {
+                if (game.board[r][column] === 0) {
+                    game.board[r][column] = playerValue;
+                    placedRow = r;
                     break;
                 }
             }
 
-            if (!placed) {
+            if (placedRow === -1) {
                 return {
                     status: 400,
                     body: JSON.stringify({ error: "Column full" })
                 };
             }
 
-            // Check win
+            // 🔥 Check win AFTER placing
             if (checkWin(game.board, playerValue)) {
                 game.winner = playerId;
             } else {
-                // Switch turn
                 game.currentTurn = playerId === "P1" ? "P2" : "P1";
             }
 
