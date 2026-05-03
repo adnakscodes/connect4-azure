@@ -16,7 +16,7 @@ app.http("createGame", {
                 id: gameId,
                 gameId: gameId,
                 board: Array(6).fill(null).map(() => Array(7).fill(0)),
-                players: ["P1"]   // 👈 creator is P1
+                players: ["P1"]
             };
 
             await createGame(game);
