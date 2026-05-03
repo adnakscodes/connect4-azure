@@ -16,9 +16,11 @@ app.http("joinGame", {
                 return {
                     status: 404,
                     headers: {
-                        "Content-Type": "application/json",
-                        ...corsHeaders()
-                    },
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "http://localhost:8080",
+    "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type"
+},
                     body: JSON.stringify({ error: "Game not found" })
                 };
             }
@@ -27,9 +29,11 @@ app.http("joinGame", {
                 return {
                     status: 400,
                     headers: {
-                        "Content-Type": "application/json",
-                        ...corsHeaders()
-                    },
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "http://localhost:8080",
+    "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type"
+},
                     body: JSON.stringify({ error: "Game full" })
                 };
             }
@@ -42,9 +46,11 @@ app.http("joinGame", {
             return {
                 status: 200,
                 headers: {
-                    "Content-Type": "application/json",
-                    ...corsHeaders()
-                },
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "http://localhost:8080",
+    "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type"
+},
                 body: JSON.stringify({
                     gameId,
                     playerId,
@@ -58,9 +64,11 @@ app.http("joinGame", {
             return {
                 status: 500,
                 headers: {
-                    "Content-Type": "application/json",
-                    ...corsHeaders()
-                },
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "http://localhost:8080",
+    "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type"
+},
                 body: JSON.stringify({ error: err.message })
             };
         }
