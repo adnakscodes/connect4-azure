@@ -13,6 +13,10 @@ app.http("joinGame", {
         if (!game) {
             return {
                 status: 404,
+                headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+    },
                 body: JSON.stringify({ error: "Game not found" })
             };
         }
@@ -20,6 +24,10 @@ app.http("joinGame", {
         if (game.players.length >= 2) {
             return {
                 status: 400,
+                headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+    },
                 body: JSON.stringify({ error: "Game full" })
             };
         }
@@ -31,6 +39,10 @@ app.http("joinGame", {
 
         return {
             status: 200,
+            headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+    },
             body: JSON.stringify({
                 gameId,
                 playerId,

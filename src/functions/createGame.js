@@ -22,6 +22,10 @@ app.http("createGame", {
 
         return {
             status: 200,
+            headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+    },
             body: JSON.stringify({ gameId })
         };
     }
