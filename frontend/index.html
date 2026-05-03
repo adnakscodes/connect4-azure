@@ -16,6 +16,7 @@
             height: 50px;
             background: #ddd;
             border-radius: 50%;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -74,8 +75,29 @@ async function joinGame() {
     pollGame();
 }
 
+// Make move (drop piece)
+async function makeMove(column) {
+    if (!currentGameId || !currentPlayer) return;
+
+    const res = await fetch(API + "/makeMove", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            gameId: currentGameId,
+            column,
+            playerId: currentPlayer
+        })
+    });
+
+    const data = await res.json();
+
+    if (data.error) {
+        alert(data.error);
+    }
+}
+
 // Poll game state
-async function pollGame() {
+function pollGame() {
     setInterval(async () => {
         if (!currentGameId) return;
 
@@ -86,15 +108,18 @@ async function pollGame() {
     }, 2000);
 }
 
-// Render board
+// Render board with clickable columns
 function renderBoard(board) {
     const boardDiv = document.getElementById("board");
     boardDiv.innerHTML = "";
 
-    board.forEach(row => {
-        row.forEach(cell => {
+    board.forEach((row, rowIndex) => {
+        row.forEach((cell, colIndex) => {
             const div = document.createElement("div");
             div.className = "cell";
+
+            // Click = drop piece in column
+            div.onclick = () => makeMove(colIndex);
 
             if (cell === 1) div.style.background = "red";
             if (cell === 2) div.style.background = "yellow";
