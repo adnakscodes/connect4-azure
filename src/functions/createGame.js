@@ -16,7 +16,7 @@ app.http("createGame", {
                 id: gameId,
                 gameId: gameId,
                 board: Array(6).fill(null).map(() => Array(7).fill(0)),
-                players: []
+                players: ["P1"]   // 👈 creator is P1
             };
 
             await createGame(game);
@@ -26,7 +26,10 @@ app.http("createGame", {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ gameId })
+                body: JSON.stringify({
+                    gameId,
+                    playerId: "P1"
+                })
             };
         } catch (err) {
             context.log("ERROR createGame:", err);

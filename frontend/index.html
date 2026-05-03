@@ -4,8 +4,19 @@
     <title>Connect 4</title>
     <style>
         body { font-family: Arial; text-align: center; }
-        .board { display: grid; grid-template-columns: repeat(7, 50px); gap: 5px; justify-content: center; margin-top: 20px; }
-        .cell { width: 50px; height: 50px; background: #ddd; border-radius: 50%; }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(7, 50px);
+            gap: 5px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .cell {
+            width: 50px;
+            height: 50px;
+            background: #ddd;
+            border-radius: 50%;
+        }
     </style>
 </head>
 <body>
@@ -26,6 +37,7 @@
 const API = "https://deploymentaa-gmggejfjcvhmcada.southeastasia-01.azurewebsites.net/api";
 
 let currentGameId = null;
+let currentPlayer = null;
 
 // Create game
 async function createGame() {
@@ -33,7 +45,10 @@ async function createGame() {
     const data = await res.json();
 
     currentGameId = data.gameId;
-    document.getElementById("status").innerText = "Game ID: " + currentGameId;
+    currentPlayer = data.playerId;
+
+    document.getElementById("status").innerText =
+        "Game ID: " + data.gameId + " | You are " + data.playerId;
 
     pollGame();
 }
@@ -51,7 +66,10 @@ async function joinGame() {
     const data = await res.json();
 
     currentGameId = gameId;
-    document.getElementById("status").innerText = "Joined as " + data.playerId;
+    currentPlayer = data.playerId;
+
+    document.getElementById("status").innerText =
+        "Game ID: " + gameId + " | You are " + data.playerId;
 
     pollGame();
 }
