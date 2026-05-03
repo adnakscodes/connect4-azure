@@ -1,5 +1,5 @@
 const { app } = require("@azure/functions");
-const { games } = require("./store");
+const { createGame } = require("./store");
 
 function generateGameId() {
     return Math.random().toString(36).substring(2, 8);
@@ -11,18 +11,17 @@ app.http("createGame", {
     handler: async (request, context) => {
         const gameId = generateGameId();
 
-        games[gameId] = {
+        const game = {
+            id: gameId,
+            gameId: gameId,
             board: Array(6).fill(null).map(() => Array(7).fill(0)),
             players: []
         };
 
-        context.log("Game created:", gameId);
+        await createGame(game);
 
         return {
             status: 200,
-            headers: {
-                "Content-Type": "application/json"
-            },
             body: JSON.stringify({ gameId })
         };
     }
