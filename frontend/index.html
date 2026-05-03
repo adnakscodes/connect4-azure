@@ -3,20 +3,62 @@
 <head>
     <title>Connect 4</title>
     <style>
-        body { font-family: Arial; text-align: center; }
+        body {
+            font-family: Arial;
+            text-align: center;
+            background: #0b1b2b;
+            color: white;
+        }
+
         .board {
             display: grid;
-            grid-template-columns: repeat(7, 50px);
-            gap: 5px;
+            grid-template-columns: repeat(7, 70px);
+            gap: 8px;
             justify-content: center;
-            margin-top: 20px;
+            margin-top: 25px;
+            background: #0044cc;
+            padding: 10px;
+            border-radius: 10px;
         }
+
         .cell {
-            width: 50px;
-            height: 50px;
-            background: #ddd;
+            width: 70px;
+            height: 70px;
+            background: #001f5c;
             border-radius: 50%;
+            position: relative;
+            overflow: hidden;
             cursor: pointer;
+        }
+
+        .piece {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            position: absolute;
+            left: 5px;
+        }
+
+        .p1 { background: red; }
+        .p2 { background: yellow; }
+
+        /* 🔥 DROP ANIMATION */
+        @keyframes drop {
+            from {
+                transform: translateY(-500px);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .drop {
+            animation: drop 0.4s ease-out;
+        }
+
+        .status {
+            margin-top: 15px;
+            font-size: 18px;
         }
     </style>
 </head>
@@ -30,7 +72,8 @@
 <input id="gameIdInput" placeholder="Enter Game ID">
 <button onclick="joinGame()">Join Game</button>
 
-<h3 id="status"></h3>
+<div class="status" id="status"></div>
+<div class="status" id="turn"></div>
 
 <div id="board" class="board"></div>
 
@@ -39,6 +82,9 @@ const API = "https://deploymentaa-gmggejfjcvhmcada.southeastasia-01.azurewebsite
 
 let currentGameId = null;
 let currentPlayer = null;
+let currentTurn = null;
+let winner = null;
+let previousBoard = null;
 
 // Create game
 async function createGame() {
@@ -75,11 +121,11 @@ async function joinGame() {
     pollGame();
 }
 
-// Make move (drop piece)
+// Make move
 async function makeMove(column) {
-    if (!currentGameId || !currentPlayer) return;
+    if (!currentGameId || !currentPlayer || winner) return;
 
-    const res = await fetch(API + "/makeMove", {
+    await fetch(API + "/makeMove", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -88,15 +134,9 @@ async function makeMove(column) {
             playerId: currentPlayer
         })
     });
-
-    const data = await res.json();
-
-    if (data.error) {
-        alert(data.error);
-    }
 }
 
-// Poll game state
+// Poll game
 function pollGame() {
     setInterval(async () => {
         if (!currentGameId) return;
@@ -104,29 +144,58 @@ function pollGame() {
         const res = await fetch(API + "/getGame?gameId=" + currentGameId);
         const game = await res.json();
 
+        currentTurn = game.currentTurn;
+        winner = game.winner;
+
+        updateStatus();
         renderBoard(game.board);
-    }, 2000);
+    }, 1000);
 }
 
-// Render board with clickable columns
+// Update UI status
+function updateStatus() {
+    const turnDiv = document.getElementById("turn");
+
+    if (winner) {
+        turnDiv.innerText = winner + " wins 🎉";
+    } else {
+        turnDiv.innerText = "Current Turn: " + currentTurn;
+    }
+}
+
+// Render board with animation
 function renderBoard(board) {
     const boardDiv = document.getElementById("board");
     boardDiv.innerHTML = "";
 
-    board.forEach((row, rowIndex) => {
-        row.forEach((cell, colIndex) => {
-            const div = document.createElement("div");
-            div.className = "cell";
+    for (let r = 0; r < board.length; r++) {
+        for (let c = 0; c < board[r].length; c++) {
 
-            // Click = drop piece in column
-            div.onclick = () => makeMove(colIndex);
+            const cell = document.createElement("div");
+            cell.className = "cell";
 
-            if (cell === 1) div.style.background = "red";
-            if (cell === 2) div.style.background = "yellow";
+            cell.onclick = () => makeMove(c);
 
-            boardDiv.appendChild(div);
-        });
-    });
+            const value = board[r][c];
+
+            if (value !== 0) {
+                const piece = document.createElement("div");
+                piece.className = "piece " + (value === 1 ? "p1" : "p2");
+
+                // 🔥 Apply animation only if new piece
+                if (!previousBoard || previousBoard[r][c] === 0) {
+                    piece.classList.add("drop");
+                }
+
+                cell.appendChild(piece);
+            }
+
+            boardDiv.appendChild(cell);
+        }
+    }
+
+    // Save for next comparison
+    previousBoard = JSON.parse(JSON.stringify(board));
 }
 </script>
 
