@@ -1,5 +1,6 @@
 const { app } = require("@azure/functions");
 const { getGame } = require("./store");
+const { corsHeaders } = require("./cors");
 
 app.http("getGame", {
     methods: ["GET"],
@@ -12,9 +13,9 @@ app.http("getGame", {
                 return {
                     status: 400,
                     headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
-    },
+                        "Content-Type": "application/json",
+                        ...corsHeaders()
+                    },
                     body: JSON.stringify({ error: "Missing gameId" })
                 };
             }
@@ -25,9 +26,9 @@ app.http("getGame", {
                 return {
                     status: 404,
                     headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
-    },
+                        "Content-Type": "application/json",
+                        ...corsHeaders()
+                    },
                     body: JSON.stringify({ error: "Game not found" })
                 };
             }
@@ -37,9 +38,9 @@ app.http("getGame", {
             return {
                 status: 200,
                 headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
-    },
+                    "Content-Type": "application/json",
+                    ...corsHeaders()
+                },
                 body: JSON.stringify({
                     id,
                     gameId: gid,
@@ -54,9 +55,9 @@ app.http("getGame", {
             return {
                 status: 500,
                 headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
-    },
+                    "Content-Type": "application/json",
+                    ...corsHeaders()
+                },
                 body: JSON.stringify({ error: err.message })
             };
         }
