@@ -1,6 +1,5 @@
 const { app } = require("@azure/functions");
 const { createGame } = require("./store");
-const { corsHeaders } = require("./cors");
 
 function generateGameId() {
     return Math.random().toString(36).substring(2, 8);
@@ -25,11 +24,8 @@ app.http("createGame", {
             return {
                 status: 200,
                 headers: {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "http://localhost:8080",
-    "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type"
-},
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify({ gameId })
             };
         } catch (err) {
@@ -38,11 +34,8 @@ app.http("createGame", {
             return {
                 status: 500,
                 headers: {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "http://localhost:8080",
-    "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type"
-},
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify({ error: err.message })
             };
         }
