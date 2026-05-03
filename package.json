@@ -2,23 +2,11 @@
   "name": "connect4-azure",
   "version": "1.0.0",
   "description": "Connect 4 backend with Azure Functions",
-  "main": "src/functions/*.js",
+  "main": "src/functions/createGame.js",
   "scripts": {
     "start": "func start"
   },
   "dependencies": {
     "@azure/functions": "^4.0.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/adnakscodes/connect4-azure.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/adnakscodes/connect4-azure/issues"
-  },
-  "homepage": "https://github.com/adnakscodes/connect4-azure#readme"
+  }
 }
