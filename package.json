@@ -2,7 +2,7 @@
   "name": "connect4-azure",
   "version": "1.0.0",
   "description": "Connect 4 backend with Azure Functions",
-  "main": "src/functions/createGame.js",
+  "main": "src/functions",
   "scripts": {
     "start": "func start"
   },
